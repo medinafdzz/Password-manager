@@ -1,4 +1,4 @@
-# Password Manager
+# Password Manager🔒
 
 This is a simple password manager developed in Python with a graphical user interface using the tkinter library. The program allows users to securely store their user credentials and retrieve and decrypt the stored passwords.
 
