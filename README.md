@@ -24,11 +24,11 @@ pip install pyjwt
 ```
 ## Usage🚀
 
-1. Run the application. 🚀🖱️
-2. Enter your username and password in the corresponding fields. 👤🔑
-3. Click the "Save Credentials" button to securely save the user credentials to a text file. 💾
-4. To retrieve a password, click the "Load Token" button and select the file containing the password. 📂🔑
-5. If you want to manually decrypt a password, click the "Decrypt Token" button and follow the instructions. 🔐🔓
+1. Run the application. 
+2. Enter your username and password in the corresponding fields. 
+3. Click the "Save Credentials" button to securely save the user credentials to a text file. 
+4. To retrieve a password, click the "Load Token" button and select the file containing the password. 
+5. If you want to manually decrypt a password, click the "Decrypt Token" button and follow the instructions. 
 
 ## Secure Storage🔐
 
