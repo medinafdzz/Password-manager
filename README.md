@@ -42,8 +42,6 @@ If you'd like to contribute to this project, we welcome suggestions and improvem
 
 This project is under the MIT License.
 
-
 ## Author👨‍💻
 
-Developed by [@medinafdzz]
-
+- Developed by [@Medinafdzz](https://github.com/medinafdzz)
