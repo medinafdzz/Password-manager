@@ -142,3 +142,4 @@ y = (window.winfo_screenheight() // 2) - (window_height // 2)
 window.geometry('{}x{}+{}+{}'.format(window_width, window_height, x, y))
 
 window.mainloop()
+input("Presiona Enter para salir")
