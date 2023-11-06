@@ -54,7 +54,7 @@ def save_password_to_db():
     try:
         connection = psycopg2.connect(
             user="postgres",
-            password=passwordDB,  # or change passwordDB for your password
+            password=passwordDB,  # change passwordDB for your DB password
             host="localhost",
             port="5432",
             database="Password-Manager"
