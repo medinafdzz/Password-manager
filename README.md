@@ -1,47 +1,83 @@
-# Password Manager🔒
+# Password Manager :key:
 
-This is a simple password manager developed in Python with a graphical user interface using the tkinter library. The program allows users to securely store their user credentials and retrieve and decrypt the stored passwords.
+![Python Version](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Features✨
+## Overview :mag_right:
 
-- Secure storage of passwords in text files.
-- Encryption and decryption of passwords using JWT (JSON Web Tokens).
-- User-friendly graphical user interface.
+The Password Manager is a simple Python application that allows you to securely store and manage your passwords. It uses a graphical user interface built with the Tkinter library and stores passwords in a PostgreSQL database. You can also encrypt and decrypt passwords using JSON Web Tokens (JWT).
 
-## Requirements📋
+## Features :rocket:
 
-To run this application, you need to have Python 3 installed on your system. You must also install the following Python libraries:
+- Save your credentials to your PostgreSQL database.
+- Decrypt and reveal stored passwords.
+- Load and decrypt tokens from text files.
+- User-friendly GUI with password input masking.
 
-- tkinter: For the graphical user interface.
-- jwt: For encrypting and decrypting passwords.
-- re: For handling regular expressions.
+## Prerequisites :gear:
 
-You can install these libraries using pip:
+- [Python 3](https://www.python.org/downloads/)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- Python libraries: `tkinter`, `psycopg2`, `jwt`
 
-```bash
-pip install tk
-pip install pyjwt
+## Installation :wrench:
+
+1. Clone this repository:
+- git clone https://github.com/yourusername/password-manager.git
+
+2. Install the required libraries:
+ ```cmd
+- pip install psycopg2-binary PyJWT
 ```
-## Usage🚀
+3. Make sure you have a PostgreSQL server set up and running.
 
-1. Run the application. 
-2. Enter your username and password in the corresponding fields. 
-3. Click the "Save Credentials" button to securely save the user credentials to a text file. 
-4. To retrieve a password, click the "Load Token" button and select the file containing the password. 
-5. If you want to manually decrypt a password, click the "Decrypt Token" button and follow the instructions. 
+4. Replace the following database connection details in the code with your own values:
+   
+```python
+user="postgres",
+password=passwordDB,  # Change 'passwordDB' to your PostgreSQL password
+host="localhost",
+port="5432",
+database="Password-Manager"
+```
+5. queries.sql is the file responsible for storing SQL queries.
+```sql
+-- Insert user,password and token
+INSERT INTO passwords (username, password, token) VALUES (%s, %s, %s);
+```
+6. The load_queries function in the Python code reads SQL queries from the queries.sql file, making it easy to manage your database operations.
+```sql
+# Load SQL queries from the file
+def load_queries():
+  with open("queries.sql", "r") as sql_file:
+    return sql_file.read()
+```
+   
+## Usage :computer:
+Run the application:
+```cmd
+phyton password_manager.py
+```
+- Enter your username and password.
+- Click "Save Credentials" to save them as a token.txt.
+- Click "Reveal token" to decrypt and reveal a stored token.
+- Click "Load Token" to load and decrypt tokens from text files.
+- Click "Save to Database" to securely store your credentials in your PostgreSQL database.
 
-## Secure Storage🔐
+## License :page_with_curl:
+This project is licensed under the MIT License.
 
-Passwords are stored in encrypted text files using JWT (JSON Web Tokens). Security is based on using a secret key (secret_key) to sign and verify the tokens. Make sure your secret key is strong and secure.
+## Acknowledgments :pray:
+Thanks to the open-source community for creating and maintaining the libraries used in this project.
 
-## Contribution🤝
+Feel free to customize and improve this Password Manager application to meet your specific needs!
 
-If you'd like to contribute to this project, we welcome suggestions and improvements! You can fork this repository, make your changes, and submit a pull request.
+Happy password managing! :lock: :key:
 
-## License📜
+## Author: 
+[@medinafdzz](https://github.com/medinafdzz)
+<br>
+<br>
 
-This project is under the MIT License.
 
-## Author👨‍💻
 
-- Developed by [@Medinafdzz](https://github.com/medinafdzz)
