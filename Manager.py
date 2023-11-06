@@ -2,31 +2,27 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, simpledialog
 import jwt
 import re
+import psycopg2 
+import os
 
-# Create the main window
+# Crear la ventana principal
 window = tk.Tk()
 window.title("Password Manager")
-window.geometry("400x180")  # Window size
-
-# No resizable window
+window.geometry("400x180")
 window.resizable(False, False)
 
-# Set the window icon
-window.iconbitmap('icon.ico')
+# Configurar colores de fondo y fuente
+bg_color = "#36393F"
+fg_color = "white"
+font_style = "Arial"
+font_size = 10
 
-# Configure a background color and font
-bg_color = "#36393F"  # Dark gray background color
-fg_color = "white"    # White text color
-font_style = "Arial"  # Font style
-font_size = 10        # Font size
-
-# Set the background color of the window
 window.configure(bg=bg_color)
 
-# Secret key to verify the token
+# Clave secreta para verificar el token
 secret_key = 'my_secret_key'
 
-# Function to generate a token
+# Función para generar un token
 def generate_token(username, password):
     payload = {
         'username': username,
@@ -35,32 +31,39 @@ def generate_token(username, password):
     token = jwt.encode(payload, secret_key, algorithm='HS256')
     return token
 
-# Function to save the password and token to a text file
-def save_password():
+# Modificar la función save_password_to_db para obtener el nombre de usuario y la contraseña desde los campos de entrada
+def save_password_to_db():
+    username = username_entry.get()
+    
+    # Obtener la contraseña de la variable de entorno
+    password = os.environ.get("DB_PASSWORD")
+
+    if password is None:
+        messagebox.showerror("Error", "Contraseña de base de datos no configurada en la variable de entorno.")
+        return
+
     username = username_entry.get()
     password = password_entry.get()
-
-    if not any(c.isalpha() for c in username):
-        # Check if there is at least one letter in the username
-        messagebox.showerror("Error", "The username must contain at least one letter.")
-    elif len(password) < 5:
-        # Show a popup window with a warning message
-        messagebox.showerror("Error", "The password must be at least 5 characters long.")
-    else:
-        # Generate the token
+    try:
+        connection = psycopg2.connect(
+            user="postgres",
+            password="Amefer03",
+            host="localhost",
+            port="5432",
+            database="Password-Manager"
+        )
+        cursor = connection.cursor()
         token = generate_token(username, password)
+        cursor.execute("INSERT INTO passwords (username, password,token) VALUES (%s, %s,%s)", (username, password,token))
+        connection.commit()
+        connection.close()
+        messagebox.showinfo("Success", "Credentials saved successfully.")
+    except Exception as e:
+        messagebox.showerror("Error", "Error saving credentials to the database: " + str(e))
 
-        # Open a file dialog to choose the file location
-        saved_file = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
-
-        if saved_file:
-            with open(saved_file, "w") as file:
-                file.write(f"Username: {username}\nToken: {token}")
-                messagebox.showinfo("Success", "Credentials saved successfully.")  # Confirmation message
-
-        # Clear the fields after saving
-        username_entry.delete(0, tk.END)
-        password_entry.delete(0, tk.END)
+# Crear un marco para los botones
+button_frame = tk.Frame(window, bg=bg_color)
+button_frame.pack()
 
 # Function to decrypt a token with a custom dialog
 def decrypt_token():
@@ -118,7 +121,7 @@ button_frame = tk.Frame(window, bg=bg_color)
 button_frame.pack()
 
 # Button to save the password and token to a text file
-save_button = tk.Button(button_frame, text="Save Credentials", command=save_password, bg=bg_color, fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
+save_button = tk.Button(button_frame, text="Save Credentials", command=save_password_to_db, bg=bg_color, fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
 save_button.pack(side=tk.TOP)
 
 # Create another space frame
@@ -132,6 +135,11 @@ decrypt_button.pack(side=tk.LEFT, padx=5)  # Añade un espacio horizontal de 10 
 # Button to load and decrypt a token from a file
 load_decrypt_button = tk.Button(button_frame, text="Load Token", command=load_and_decrypt_token, bg=bg_color, fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
 load_decrypt_button.pack(side=tk.RIGHT)
+
+# Botón para guardar la contraseña y el token en la base de datos
+save_db_button = tk.Button(button_frame, text="Save to Database", command=save_password_to_db, bg=bg_color, fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
+save_db_button.pack(side=tk.TOP)
+
 
 # Center the window on the screen
 window.update_idletasks()
