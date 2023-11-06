@@ -24,8 +24,6 @@ window.configure(bg=bg_color)
 secret_key = 'my_secret_key'
 
 # Function to generate a token
-
-
 def generate_token(username, password):
     payload = {
         'username': username,
@@ -34,11 +32,13 @@ def generate_token(username, password):
     token = jwt.encode(payload, secret_key, algorithm='HS256')
     return token
 
+# Load SQL queries from the file
+def load_queries():
+    with open("queries.sql", "r") as sql_file:
+        return sql_file.read()
+
 # Modify the save_password_to_db function to get the username and password from the input fields
-
-
 def save_password_to_db():
-
     # Get the password from the environment variable
     passwordDB = os.environ.get("DB_PASSWORD")
 
@@ -50,7 +50,9 @@ def save_password_to_db():
     username = username_entry.get()
     password = password_entry.get()
 
-    # Replace these data with your own values
+    # Load SQL queries from the file
+    queries = load_queries()
+
     try:
         connection = psycopg2.connect(
             user="postgres",
@@ -61,8 +63,7 @@ def save_password_to_db():
         )
         cursor = connection.cursor()
         token = generate_token(username, password)
-        cursor.execute(
-            "INSERT INTO passwords (username, password,token) VALUES (%s, %s,%s)", (username, password, token))
+        cursor.execute(queries, (username, password, token))  # Use queries loaded from the file
         connection.commit()
         connection.close()
         messagebox.showinfo("Success", "Credentials saved successfully.")
@@ -70,14 +71,11 @@ def save_password_to_db():
         messagebox.showerror(
             "Error", "Error saving credentials to the database: " + str(e))
 
-
 # Create a frame for the buttons
 button_frame = tk.Frame(window, bg=bg_color)
 button_frame.pack()
 
 # Function to decrypt a token with a custom dialog
-
-
 def decrypt_token():
     dialog = tk.simpledialog.askstring(
         "Decrypt Token", "Enter Token:", parent=window, show="*")
@@ -93,8 +91,6 @@ def decrypt_token():
             messagebox.showerror("Error", "Error decrypting the token.")
 
 # Function to load and decrypt a token from a file
-
-
 def load_and_decrypt_token():
     file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
     if file_path:
@@ -115,7 +111,6 @@ def load_and_decrypt_token():
                         "Error", "Error decrypting the token.")
             else:
                 messagebox.showerror("Error", "Token not found in the file.")
-
 
 # Label for the username
 username_label = tk.Label(window, text="Username:",
@@ -148,7 +143,7 @@ button_frame.pack()
 # Button to decrypt a token with a custom dialog
 decrypt_button = tk.Button(button_frame, text="Reveal token", command=decrypt_token, bg=bg_color,
                            fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
-# Añade un espacio horizontal de 10 píxeles a la derecha del botón Decrypt Token
+# Add a horizontal space of 10 pixels to the right of the Decrypt Token button
 decrypt_button.pack(side=tk.LEFT, padx=5)
 
 # Create an invisible frame for spacing on the right
@@ -160,7 +155,6 @@ load_decrypt_button = tk.Button(button_frame, text="Load Token", command=load_an
                                 fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
 load_decrypt_button.pack(side=tk.RIGHT)
 
-
 # Space between the password entry and the buttons
 space_frame = tk.Frame(window, height=10, bg=bg_color)
 space_frame.pack()
@@ -168,7 +162,6 @@ space_frame.pack()
 # Create a frame for buttons
 button_frame = tk.Frame(window, bg=bg_color)
 button_frame.pack()
-
 
 # Button to save the password and token to a text file
 save_button = tk.Button(button_frame, text="Save Credentials", command=save_password_to_db, bg=bg_color,
@@ -179,7 +172,6 @@ save_button.pack(side=tk.RIGHT, padx=5)
 save_db_button = tk.Button(button_frame, text="Save to Database", command=save_password_to_db, bg=bg_color,
                            fg=fg_color, highlightbackground=bg_color, highlightthickness=0, font=(font_style, font_size))
 save_db_button.pack(side=tk.LEFT)
-
 
 # Center the window on the screen
 window.update_idletasks()
